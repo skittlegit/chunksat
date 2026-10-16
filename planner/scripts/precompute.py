@@ -42,7 +42,7 @@ from app.routes.cases import get_case_ephemeris  # noqa: E402
 from app.routes.planning import plan  # noqa: E402
 from app.routes.simulation import simulate  # noqa: E402
 
-# Must match lib/types.ts Strategy and components/controls/ParameterSliders.tsx.
+# Must match src/lib/types.ts Strategy and src/components/controls/ParameterSliders.tsx.
 STRATEGIES = ["boustrophedon", "greedy", "center_first"]
 SETTLE_CS = range(10, 151, 10)  # 0.1 .. 1.5 s, step 0.1
 ONA_DS = range(0, 201, 10)  # 0 .. 20 deg, step 1

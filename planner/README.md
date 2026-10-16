@@ -78,8 +78,8 @@ route handlers and writes static JSON to `../public/data`:
 
 Re-run it whenever the planner, scorer, test cases, or slider ranges change.
 The slider ranges and strategy list at the top of the script must match
-`components/controls/ParameterSliders.tsx` and the `Strategy` type in
-`lib/types.ts`.
+`src/components/controls/ParameterSliders.tsx` and the `Strategy` type in
+`src/lib/types.ts`.
 
 ## Tests
 

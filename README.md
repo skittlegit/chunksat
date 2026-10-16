@@ -47,19 +47,20 @@ python -m venv .venv
 ```
 
 Slider ranges and strategies in `planner/scripts/precompute.py` must match
-`components/controls/ParameterSliders.tsx` and `lib/types.ts`.
+`src/components/controls/ParameterSliders.tsx` and `src/lib/types.ts`.
 
 ## Layout
 
-- `app/page.tsx` — main console, mission strip, per-case cards
-- `components/` — score card, frame table, coverage map, timeline
-- `hooks/useRunPass.ts` — load precomputed result → store flow
-- `lib/api.ts` — static data loader + adapter between the flat planner
+- `src/app/page.tsx` — main console, mission strip, per-case cards
+- `src/components/` — score card, frame table, coverage map, timeline
+- `src/hooks/useRunPass.ts` — load precomputed result → store flow
+- `src/lib/api.ts` — static data loader + adapter between the flat planner
   output and the rich UI types
-- `lib/constants.ts` — weight scheme, score ceilings, palette
-- `store/useAppStore.ts` — Zustand store (selected case, sliders, results)
+- `src/lib/constants.ts` — weight scheme, score ceilings, palette
+- `src/store/useAppStore.ts` — Zustand store (selected case, sliders, results)
 - `public/data/` — generated; see "Regenerating data"
 - `planner/` — Python planner and precompute script
+- `docs/` — product brief and design system notes
 
 ## Notes
 
