@@ -19,11 +19,12 @@ export const WHEEL_MARGIN_MNMS = 24;
 export const AOI_CENTER: [number, number] = [37.5, -122.0];
 export const DEFAULT_MAP_ZOOM = 6;
 
-// CartoCDN dark-matter tiles — pairs naturally with slate UI
+// Esri Dark Gray Canvas — keyless (CARTO basemaps now require an API key).
+// Native tiles stop at z16; Leaflet upscales beyond that.
 export const DARK_TILE_URL =
-  "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
-export const DARK_TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CARTO';
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+export const DARK_TILE_MAX_NATIVE_ZOOM = 16;
+export const DARK_TILE_ATTRIBUTION = "&copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors";
 
 // ============================================================
 // Palette — Monochrome

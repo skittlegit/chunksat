@@ -18,6 +18,7 @@ import { useTimelineStore } from "@/store/useTimelineStore";
 import {
   AOI_CENTER,
   DARK_TILE_ATTRIBUTION,
+  DARK_TILE_MAX_NATIVE_ZOOM,
   DARK_TILE_URL,
   DEFAULT_MAP_ZOOM,
   TILE_STATUS_COLOR,
@@ -85,7 +86,11 @@ export default function CoverageMapInner() {
       attributionControl
       zoomControl
     >
-      <TileLayer url={DARK_TILE_URL} attribution={DARK_TILE_ATTRIBUTION} />
+      <TileLayer
+        url={DARK_TILE_URL}
+        attribution={DARK_TILE_ATTRIBUTION}
+        maxNativeZoom={DARK_TILE_MAX_NATIVE_ZOOM}
+      />
 
       {/* Auto-fit the camera to the actual pass geometry on case change.
           Falls back to the AOI polygon alone when ephemeris hasn't loaded
