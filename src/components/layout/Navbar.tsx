@@ -39,9 +39,6 @@ export function Navbar() {
           >
             chunksat
           </span>
-          <span className="mono hidden text-[9px] uppercase tracking-[0.22em] text-[var(--fg-faint)] sm:inline">
-            v.0.1
-          </span>
         </Link>
 
         <div className="ml-auto flex items-stretch">
