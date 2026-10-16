@@ -82,21 +82,21 @@ export function ParameterSliders() {
         value={settle}
         min={0.1}
         max={1.5}
-        step={0.05}
+        step={0.1}
         unit="s"
-        hint="buffer after slew · backend default 0.3"
+        hint="buffer after slew · planner default 0.3"
         onChange={setSettle}
-        decimals={2}
       />
       <SliderRow
         label="Off-nadir margin"
         value={ona}
         min={0}
         max={20}
-        step={0.5}
+        step={1}
         unit="deg"
         hint="headroom under 60° limit"
         onChange={setOna}
+        decimals={0}
       />
     </div>
   );

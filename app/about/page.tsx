@@ -19,21 +19,18 @@ export default function AboutPage() {
               How we built the orbital scheduler.
             </h1>
             <p className="max-w-[680px] text-[14px] leading-relaxed text-[var(--fg-mute)]">
-              Two repos, one pass: a Python + FastAPI service that propagates
-              orbits and scores schedules, and a Next.js console that renders
-              them. Below is the path from a blank editor to a mission total
+              One repo, one pass: a Python planner that propagates orbits and
+              scores schedules, and a Next.js console that renders them. The
+              planner is frozen, so every result the console can show is
+              precomputed and served as static files.
+              Below is the path from a blank editor to a mission total
               that lands inside 99% of the geometric ceiling.
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <RepoChip
-                href="https://github.com/skittlegit/chunkyapi"
-                label="chunkyapi"
-                sub="api · python · fastapi"
-              />
-              <RepoChip
-                href="https://github.com/skittlegit/chunkyweb"
-                label="chunkyweb"
-                sub="web · next.js · react"
+                href="https://github.com/skittlegit/chunksat"
+                label="chunksat"
+                sub="python planner · next.js console"
               />
               <div className="flex items-center gap-2">
                 <PersonChip
@@ -154,7 +151,7 @@ export default function AboutPage() {
               <p>
                 On the web side the priority was honesty. Every value the UI
                 shows comes from the backend payload — the closest-approach
-                off-nadir is recomputed from SGP4 each load, the per-case
+                off-nadir is computed from SGP4 ephemeris, the per-case
                 score is the raw S_orbit returned by /api/simulate, the
                 frames-kept badge mirrors the planner&rsquo;s own diagnostics.
                 When we discovered the front-end had been hard-coding the
@@ -209,13 +206,13 @@ export default function AboutPage() {
             Source of truth for this page:{" "}
             <a
               className="underline hover:text-[var(--fg)]"
-              href="https://github.com/skittlegit/chunkyapi/blob/main/HANDOFF.md"
+              href="https://github.com/skittlegit/chunksat/blob/main/planner/HANDOFF.md"
               target="_blank"
               rel="noreferrer"
             >
-              chunkyapi/HANDOFF.md
+              planner/HANDOFF.md
             </a>{" "}
-            and chunkyapi/app/core/{`{`}propagator,tiling,planner,scorer{`}`}
+            and planner/app/core/{`{`}propagator,tiling,planner,scorer{`}`}
             .py. If the backend changes, update this page — nothing here is
             computed dynamically.
           </p>

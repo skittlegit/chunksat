@@ -18,7 +18,7 @@ class Settings:
         default_factory=lambda: _parse_origins(
             os.getenv(
                 "ALLOWED_ORIGINS",
-                "https://chunkyweb.vercel.app,http://localhost:3000",
+                "https://chunksat.vercel.app,http://localhost:3000",
             )
         )
     )

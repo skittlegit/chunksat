@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { api, type RunResult } from "@/lib/api";
+import type { PlanRequest } from "@/lib/types";
 import { useAppStore } from "@/store/useAppStore";
-import { usePlan } from "@/hooks/usePlan";
-import { useSimulate } from "@/hooks/useSimulate";
 import { useTimelineStore } from "@/store/useTimelineStore";
 
 /**
- * Centralised pass-run flow. Plan → simulate → store. One mutation pair,
- * shared by the navbar Run button and any per-case "run again" buttons.
+ * Centralised pass-run flow. Load the precomputed plan + simulate result for
+ * the current controls and store it. Shared by the navbar Run button and any
+ * per-case "run again" buttons.
  */
 export function useRunPass() {
-  const planMutation = usePlan();
-  const simulateMutation = useSimulate();
+  const runMutation = useMutation<RunResult, Error, PlanRequest>({
+    mutationFn: (params) => api.run(params),
+    gcTime: 0,
+  });
 
   const strategy = useAppStore((s) => s.strategy);
   const settleMargin = useAppStore((s) => s.settleMargin);
@@ -28,38 +32,18 @@ export function useRunPass() {
     useTimelineStore.getState().pause();
     useTimelineStore.getState().setTime(0);
 
-    const plan = await planMutation.mutateAsync({
+    const { plan, simulate } = await runMutation.mutateAsync({
       case_id: caseId,
       strategy,
       settle_margin_s: settleMargin,
       off_nadir_margin_deg: offNadirMargin,
     });
-    const simulate = await simulateMutation.mutateAsync({
-      case_id: caseId,
-      schedule: plan.schedule,
-    });
-
-    // CRITICAL memory fix: the backend ships ~35k attitude quaternion
-    // samples (~4 MB per case). The UI never reads them — simulate is
-    // the only consumer, and it just ran. Drop the array before storing
-    // so the Zustand cache and any later renders stay small. Without
-    // this, repeated runs / case switches accumulate tens of MB and
-    // crash the tab.
-    const slimPlan = {
-      ...plan,
-      schedule: { ...plan.schedule, attitude: [] },
-    };
     setCaseResult(caseId, {
-      plan: slimPlan,
+      plan,
       simulate,
       ranAt: Date.now(),
       durationMs: performance.now() - start,
     });
-
-    // Release react-query mutation caches — those still hold the fat
-    // response and request bodies until they get GC'd.
-    planMutation.reset();
-    simulateMutation.reset();
   };
 
   return {
@@ -72,11 +56,8 @@ export function useRunPass() {
       setRunningAllCaseId(null);
     },
     runningAllCaseId,
-    isRunning: planMutation.isPending || simulateMutation.isPending,
-    error: planMutation.error ?? simulateMutation.error,
-    reset: () => {
-      planMutation.reset();
-      simulateMutation.reset();
-    },
+    isRunning: runMutation.isPending,
+    error: runMutation.error,
+    reset: runMutation.reset,
   };
 }

@@ -2,22 +2,17 @@ import type {
   CaseConfig,
   EphemerisPoint,
   EphemerisResponse,
-  HealthResponse,
   PlanRequest,
   PlanResponse,
   Schedule,
-  SimulateRequest,
   SimulateResponse,
   TileInfo,
-  ValidateResponse,
   AttitudeSample,
 } from "./types";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  (process.env.NODE_ENV === "development"
-    ? "http://localhost:8000"
-    : "https://chunkyapi.onrender.com");
+// Every result the console can show is precomputed by
+// planner/scripts/precompute.py and served as static JSON from public/data.
+const DATA_BASE = "/data";
 
 export class ApiError extends Error {
   status: number;
@@ -27,36 +22,21 @@ export class ApiError extends Error {
   }
 }
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+async function fetchJson<T>(path: string): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-    });
+    res = await fetch(`${DATA_BASE}${path}`);
   } catch (e) {
-    throw new ApiError(
-      `Network error: ${(e as Error).message}. Is the API reachable at ${API_BASE}?`,
-      0
-    );
+    throw new ApiError(`Network error: ${(e as Error).message}`, 0);
   }
   if (!res.ok) {
-    const detail = await res
-      .json()
-      .catch(() => ({ detail: res.statusText }));
-    throw new ApiError(
-      detail.detail || detail.message || `API error ${res.status}`,
-      res.status
-    );
+    throw new ApiError(`Failed to load ${path} (${res.status})`, res.status);
   }
   return res.json();
 }
 
 // Backend returns case objects without weight/difficulty/off_nadir_estimate_deg.
-// The official contest weights (per chunkyapi/HANDOFF.md) are 0.25 / 0.35 / 0.40
+// The official contest weights (per planner/HANDOFF.md) are 0.25 / 0.35 / 0.40
 // for case1/case2/case3 respectively. Off-nadir estimate is parsed from the
 // case name ("~30°", "~55-60°", etc.) until the backend exposes it directly.
 const CASE_WEIGHTS: Record<string, number> = {
@@ -235,11 +215,7 @@ function adaptSchedule(raw: RawSchedule | undefined): Schedule {
     };
   });
 
-  // Keep attitude at full resolution. The simulate endpoint differentiates
-  // adjacent samples to recover body rates; any downsampling here makes the
-  // numerical derivative span slew transitions and reports fake high rates,
-  // which collapses Q_smear. useRunPass strips the array after simulate runs
-  // so it never sits in the Zustand cache.
+  // Precomputed results ship with attitude stripped (the UI never reads it).
   const attitude = (raw?.attitude as AttitudeSample[] | undefined) ?? [];
 
   return {
@@ -475,43 +451,49 @@ function adaptSimulate(
   };
 }
 
+export interface RunResult {
+  plan: PlanResponse;
+  simulate: SimulateResponse;
+}
+
 export const api = {
-  baseUrl: API_BASE,
-  health: () => apiFetch<HealthResponse>("/health"),
   getCases: async (): Promise<CaseConfig[]> => {
-    const raw = await apiFetch<
-      | CaseConfig[]
-      | { cases: Array<Partial<CaseConfig> & { id: string }> }
-    >("/api/cases");
-    const list = Array.isArray(raw) ? raw : raw?.cases ?? [];
-    return list.map(adaptCase);
+    const raw = await fetchJson<{
+      cases: Array<Partial<CaseConfig> & { id: string }>;
+    }>("/cases.json");
+    return (raw?.cases ?? []).map(adaptCase);
   },
   getEphemeris: async (caseId: string): Promise<EphemerisResponse> => {
-    const raw = await apiFetch<RawEphemerisResponse>(
-      `/api/cases/${caseId}/ephemeris`
+    const raw = await fetchJson<RawEphemerisResponse>(
+      `/ephemeris/${caseId}.json`
     );
     return adaptEphemeris(raw);
   },
-  plan: async (params: PlanRequest): Promise<PlanResponse> => {
-    const raw = await apiFetch<RawPlanResponse>("/api/plan", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
-    return adaptPlan(raw);
+  // Plan + simulate for one slider position. The index maps integer slider
+  // keys (settle in centiseconds, off-nadir in tenths of a degree) to a
+  // deduplicated result file.
+  run: async ({
+    case_id,
+    strategy = "boustrophedon",
+    settle_margin_s = 0.3,
+    off_nadir_margin_deg = 5,
+  }: PlanRequest): Promise<RunResult> => {
+    const index = await fetchJson<Record<string, string>>(
+      `/runs/${case_id}/${strategy}.json`
+    );
+    const key = `${Math.round(settle_margin_s * 100)}_${Math.round(off_nadir_margin_deg * 10)}`;
+    const hash = index[key];
+    if (!hash) {
+      throw new ApiError(
+        `No precomputed result for settle ${settle_margin_s} s / off-nadir ${off_nadir_margin_deg}°`,
+        404
+      );
+    }
+    const raw = await fetchJson<{
+      plan: RawPlanResponse;
+      simulate: RawSimulateResponse;
+    }>(`/runs/${case_id}/r/${hash}.json`);
+    const plan = adaptPlan(raw.plan);
+    return { plan, simulate: adaptSimulate(raw.simulate, plan.schedule) };
   },
-  simulate: async (params: SimulateRequest): Promise<SimulateResponse> => {
-    // The schedule carries full-resolution attitude (~35k samples / ~4 MB).
-    // Required: simulate differentiates adjacent samples for body rates,
-    // and any coarser stride straddles slew transitions → fake smear fails.
-    const raw = await apiFetch<RawSimulateResponse>("/api/simulate", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
-    return adaptSimulate(raw, params.schedule);
-  },
-  validate: (schedule: Schedule) =>
-    apiFetch<ValidateResponse>("/api/validate", {
-      method: "POST",
-      body: JSON.stringify(schedule),
-    }),
 };

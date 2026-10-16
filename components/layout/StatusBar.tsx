@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { useCases } from "@/hooks/useCases";
-import { api } from "@/lib/api";
 import { StatusDot } from "@/components/shared/StatusDot";
 
 export function StatusBar() {
@@ -11,29 +9,13 @@ export function StatusBar() {
   const result = useAppStore((s) => s.results[s.selectedCaseId]);
   const { isFetching: casesFetching, error: casesError } = useCases();
 
-  const [healthy, setHealthy] = useState<boolean | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    api
-      .health()
-      .then(() => !cancelled && setHealthy(true))
-      .catch(() => !cancelled && setHealthy(false));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const apiOk = !casesError && healthy !== false;
-  const apiStatus = !apiOk
+  // Data is static, so status reflects whether the case index loaded.
+  const dataStatus = casesError
     ? ("danger" as const)
-    : healthy === null || casesFetching
+    : casesFetching
     ? ("warn" as const)
     : ("phos" as const);
-  const apiLabel = !apiOk
-    ? "OFFLINE"
-    : healthy === null || casesFetching
-    ? "LINKING"
-    : "ONLINE";
+  const dataLabel = casesError ? "ERROR" : casesFetching ? "LOADING" : "READY";
 
   const tilesValue = result?.plan
     ? `${result.plan.diagnostics.n_tiles_imaged}/${result.plan.diagnostics.n_tiles_total}`
@@ -53,9 +35,9 @@ export function StatusBar() {
   return (
     <footer className="flex h-9 shrink-0 items-stretch overflow-x-auto border-t border-[var(--line)] bg-[var(--bg)] text-[12px]">
       <Cell>
-        <StatusDot status={apiStatus} pulse={apiStatus === "warn"} size={6} />
-        <K>api</K>
-        <V>{apiLabel}</V>
+        <StatusDot status={dataStatus} pulse={dataStatus === "warn"} size={6} />
+        <K>data</K>
+        <V>{dataLabel}</V>
       </Cell>
       <Cell>
         <K>case</K>

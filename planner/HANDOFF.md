@@ -9,8 +9,8 @@
 
 | Purpose | Path |
 |---|---|
-| **Submission (edit this)** | `c:\Users\ASUS\github\chunks\chunkyapi\submission\my_submission.py` |
-| Python venv | `c:\Users\ASUS\github\chunks\chunkyapi\.venv` (numpy, scipy, sgp4, shapely, py 3.13) |
+| **Submission (edit this)** | `planner\submission\my_submission.py` |
+| Python venv | `planner\.venv` (numpy, scipy, sgp4, shapely, py 3.13) |
 | Grader runner | `C:\Users\ASUS\Downloads\hack_TM2SxAeon418-main\Lost-In-Space\teams_kit\test_my_submission.py` |
 | Organizer reference (read-only) | `C:\Users\ASUS\Downloads\hack_TM2SxAeon418-main\Lost-In-Space\solution.py` |
 | Configs | `…\teams_kit\configs\case[1-3].json` (identical to `organizer_harness\configs\`) |
@@ -21,7 +21,7 @@
 ## Run Command (single-line)
 
 ```powershell
-cd "C:\Users\ASUS\Downloads\hack_TM2SxAeon418-main\Lost-In-Space\teams_kit"; C:\Users\ASUS\github\chunks\chunkyapi\.venv\Scripts\python.exe test_my_submission.py "C:\Users\ASUS\github\chunks\chunkyapi\submission\my_submission.py" -q 2>&1 | Select-Object -Last 35
+cd "C:\Users\ASUS\Downloads\hack_TM2SxAeon418-main\Lost-In-Space\teams_kit"; <repo>\planner\.venv\Scripts\python.exe test_my_submission.py "<repo>\planner\submission\my_submission.py" -q 2>&1 | Select-Object -Last 35
 ```
 
 ---

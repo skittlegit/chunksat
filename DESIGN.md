@@ -1,5 +1,5 @@
 ---
-name: chunkyweb
+name: chunksat
 description: Orbital imaging scheduler console — monochrome instrument panel, aircraft-cockpit clarity.
 colors:
   # Canvas
@@ -116,7 +116,7 @@ components:
 
 ## Overview: The Instrument Panel
 
-chunkyweb is a scheduling console: the interface exists entirely to make an orbital imaging scheduler legible and controllable. The aesthetic is the Instrument Panel — monochrome data readout, aircraft-cockpit clarity, every value placed with intent.
+chunksat is a scheduling console: the interface exists entirely to make an orbital imaging scheduler legible and controllable. The aesthetic is the Instrument Panel — monochrome data readout, aircraft-cockpit clarity, every value placed with intent.
 
 **Color strategy: Restrained.** The entire surface is a grayscale ramp. White (`#ffffff`) is the only accent; it means "live," "selected," or "action." Status is communicated through brightness, weight, and pattern — never hue. The one exception is a dimmed red reserved for experimental badges.
 

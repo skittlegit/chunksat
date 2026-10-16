@@ -1,8 +1,3 @@
-export interface HealthResponse {
-  status: string;
-  version: string;
-}
-
 export interface CaseConfig {
   id: string;
   name: string;
@@ -150,12 +145,6 @@ export interface SimulateResponse {
   };
 }
 
-export interface ValidateResponse {
-  valid: boolean;
-  errors: string[];
-  warnings: string[];
-}
-
 export type Strategy = "boustrophedon" | "greedy" | "center_first";
 
 export interface PlanRequest {
@@ -163,9 +152,4 @@ export interface PlanRequest {
   strategy?: Strategy;
   settle_margin_s?: number;
   off_nadir_margin_deg?: number;
-}
-
-export interface SimulateRequest {
-  case_id: string;
-  schedule: Schedule;
 }

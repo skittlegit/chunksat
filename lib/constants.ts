@@ -5,7 +5,7 @@ import type { Strategy, TileStatus } from "./types";
 // ============================================================
 
 // Total pass length, seconds. Matches the backend's T_pass = 720 s used by
-// `compute_time_efficiency` in chunkyapi/app/core/scorer.py.
+// `compute_time_efficiency` in planner/app/core/scorer.py.
 export const PASS_DURATION_S = 720;
 export const OFF_NADIR_LIMIT_DEG = 60;
 export const BODY_RATE_LIMIT_DPS = 0.05;
@@ -95,7 +95,7 @@ export const STRATEGIES: StrategyDef[] = [
 // ============================================================
 // Weight schemes
 // ============================================================
-// Single contest weighting per chunkyapi/HANDOFF.md.
+// Single contest weighting per planner/HANDOFF.md.
 export const WEIGHT_SCHEMES: Record<
   "hackathon",
   { label: string; weights: Record<string, number> }

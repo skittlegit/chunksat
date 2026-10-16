@@ -1,8 +1,9 @@
-# ChunkyAPI
+# chunksat planner
 
-FastAPI backend for the "Lost in Space" hackathon — satellite Earth observation
-attitude planning and imaging scheduling. Pairs with the
-[chunkyweb](https://github.com/skittlegit/chunkyweb) front-end console.
+Python planner for the "Lost in Space" hackathon — satellite Earth observation
+attitude planning and imaging scheduling. Its results are precomputed into the
+chunksat console's static data (see the [repo README](../README.md)). The
+FastAPI app can still be run locally for development.
 
 ## Scoring (current)
 
@@ -64,14 +65,21 @@ API docs at http://localhost:8000/docs
 - `POST /api/simulate`
 - `POST /api/validate`
 
-## Deploy (Render)
+## Static data for the console
 
-The repo includes `Dockerfile` and `render.yaml` (a Render Blueprint). In the
-Render dashboard, create a new **Blueprint** from this repo — Render reads
-`render.yaml`, builds the Docker image, and exposes the service on the `PORT`
-it injects (the app already reads `PORT` from the environment). The `/health`
-endpoint is wired up as the health check. Override `ALLOWED_ORIGINS` in the
-Render dashboard if your frontend lives on a non-default origin.
+The API is not deployed. The planner is frozen and the console only exposes a
+finite set of inputs (3 cases × 3 strategies × the settle and off-nadir slider
+steps), so `scripts/precompute.py` runs every combination through the same
+route handlers and writes static JSON to `../public/data`:
+
+```powershell
+.venv\Scripts\python.exe scripts\precompute.py
+```
+
+Re-run it whenever the planner, scorer, test cases, or slider ranges change.
+The slider ranges and strategy list at the top of the script must match
+`components/controls/ParameterSliders.tsx` and the `Strategy` type in
+`lib/types.ts`.
 
 ## Tests
 

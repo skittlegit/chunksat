@@ -15,7 +15,7 @@ from .routes import validation as validation_routes
 
 logging.basicConfig(level=settings.log_level.upper())
 
-app = FastAPI(title="ChunkyAPI", version=settings.version)
+app = FastAPI(title="chunksat planner", version=settings.version)
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,7 +35,7 @@ app.include_router(cases_routes.router)
 @app.get("/", tags=["meta"])
 def root() -> dict:
     return {
-        "name": "ChunkyAPI",
+        "name": "chunksat planner",
         "version": settings.version,
         "docs": "/docs",
     }

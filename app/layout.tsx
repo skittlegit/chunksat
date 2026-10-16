@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "chunkyweb",
+  title: "chunksat",
   description: "Satellite attitude planning & imaging scheduler",
   manifest: "/manifest.webmanifest",
 };

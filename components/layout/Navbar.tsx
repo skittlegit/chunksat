@@ -37,7 +37,7 @@ export function Navbar() {
             className="display-tight text-[18px] leading-none text-[var(--fg)]"
             style={{ letterSpacing: "-0.04em" }}
           >
-            chunkyweb
+            chunksat
           </span>
           <span className="mono hidden text-[9px] uppercase tracking-[0.22em] text-[var(--fg-faint)] sm:inline">
             v.0.1

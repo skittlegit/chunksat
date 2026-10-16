@@ -46,13 +46,13 @@ export default function ConsolePage() {
 
   // Real closest-approach off-nadir from the backend ephemeris — this is the
   // actual minimum off-nadir-to-AOI-center over the 720 s pass, computed by
-  // chunkyapi from SGP4 + AOI centroid. Replaces the previous hard-coded
+  // the planner from SGP4 + AOI centroid. Replaces the previous hard-coded
   // estimate (which was wrong for all three cases).
   const { data: ephemeris } = useEphemeris(selectedCaseId);
   const closestOna = ephemeris?.closest_approach?.min_off_nadir_deg;
 
   // Mission total — weighted sum across all cases that have simulated.
-  // Per chunkyapi/HANDOFF.md: hackathon weights are 0.25 / 0.35 / 0.40 (sum
+  // Per planner/HANDOFF.md: hackathon weights are 0.25 / 0.35 / 0.40 (sum
   // to 1.0).
   const scheme = WEIGHT_SCHEMES.hackathon;
   const mission = useMemo(() => {
